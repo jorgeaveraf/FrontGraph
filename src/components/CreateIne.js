@@ -67,6 +67,7 @@ const CREATE_INE_MUTATION = gql`
             sexo: '',
             url: '',
         });
+        const [fieldsEnabled, setFieldsEnabled] = useState(false); // Estado para habilitar/deshabilitar campos
     
         const handleConsultClick = () => {
             const ineUrl = formState.url;
@@ -83,10 +84,19 @@ const CREATE_INE_MUTATION = gql`
                         fecha_nacimiento: data.fechaNacimiento,
                         sexo: data.sexo,
                     });
+                    setFieldsEnabled(true); // Habilitar los campos cuando se reciban los datos
                 }
             });
         };
-        
+    
+        const handleInputChange = (key, value) => {
+            if (fieldsEnabled) {
+                setFormState({
+                    ...formState,
+                    [key]: value
+                });
+            }
+        };
     
         const [createIne] = useMutation(CREATE_INE_MUTATION, {
             variables: formState,
@@ -94,7 +104,7 @@ const CREATE_INE_MUTATION = gql`
                 navigate('/');
             }
         });
-
+    
         const imagenHTML = formState.url ? ocrInstance.agregarImagenURL(formState.url) : null;
     
         return (
@@ -104,12 +114,7 @@ const CREATE_INE_MUTATION = gql`
                     <h3>Insert URL from INE</h3>
                     <input
                         value={formState.url}
-                        onChange={(e) =>
-                            setFormState({
-                                ...formState,
-                                url: e.target.value
-                            })
-                        }
+                        onChange={(e) => setFormState({ ...formState, url: e.target.value })}
                         type="text"
                         placeholder="URL Firebase"
                     />
@@ -119,14 +124,10 @@ const CREATE_INE_MUTATION = gql`
                     <h3>Verify Data from INE</h3>
                     <input
                         value={formState.nombre}
-                        onChange={(e) =>
-                            setFormState({
-                                ...formState,
-                                nombre: e.target.value
-                            })
-                        }
+                        onChange={(e) => handleInputChange('nombre', e.target.value)}
                         type="text"
                         placeholder="Nombre"
+                        disabled={!fieldsEnabled} // Deshabilitar si los campos no están habilitados
                     />
                     <input
                         value={formState.calle}
@@ -138,6 +139,7 @@ const CREATE_INE_MUTATION = gql`
                         }
                         type="text"
                         placeholder="Calle"
+                        disabled={!fieldsEnabled}
                     />
                     <input
                         value={formState.colonia}
@@ -149,6 +151,7 @@ const CREATE_INE_MUTATION = gql`
                         }
                         type="text"
                         placeholder="Colonia"
+                        disabled={!fieldsEnabled}
                     />
                     <input
                         value={formState.codigo_postal}
@@ -160,6 +163,7 @@ const CREATE_INE_MUTATION = gql`
                         }
                         type="text"
                         placeholder="Código Postal"
+                        disabled={!fieldsEnabled}
                     />
                     <input
                         value={formState.ciudad}
@@ -171,6 +175,7 @@ const CREATE_INE_MUTATION = gql`
                         }
                         type="text"
                         placeholder="Ciudad"
+                        disabled={!fieldsEnabled}
                     />
                     <input
                         value={formState.estado}
@@ -182,6 +187,7 @@ const CREATE_INE_MUTATION = gql`
                         }
                         type="text"
                         placeholder="Estado"
+                        disabled={!fieldsEnabled}
                     />
                     <input
                         value={formState.fecha_nacimiento}
@@ -193,6 +199,7 @@ const CREATE_INE_MUTATION = gql`
                         }
                         type="text"
                         placeholder="Fecha de Nacimiento"
+                        disabled={!fieldsEnabled}
                     />
                     <input
                         value={formState.sexo}
@@ -204,6 +211,7 @@ const CREATE_INE_MUTATION = gql`
                         }
                         type="text"
                         placeholder="Sexo"
+                        disabled={!fieldsEnabled}
                     />
                  {imagenHTML && <div dangerouslySetInnerHTML={{ __html: imagenHTML }}></div>}
                 </div>
